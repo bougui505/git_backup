@@ -13,7 +13,7 @@ fi
 git status -s | grep -e "^\?\?" | cut -c 4- >> .gitignore
 sed -i "/^$filename$/d" .gitignore
 
-git add -A
+git add $filename
 git status -s
 message=$(git status -s)
-git commit -a -m "$message"
+git commit -m "$message" $filename
