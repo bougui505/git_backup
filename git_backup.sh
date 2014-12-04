@@ -32,7 +32,7 @@ git_backup_db_exception()
     else
     cat << EOF
 $cwd is not present in $HOME/.git_backup.log, this local repository
-don't seem to be created by $0
+do not seem to be created by $0
 EOF
         exit 1
     fi
