@@ -25,6 +25,19 @@ git_exception()
     exit 1
 }
 
+git_backup_db_exception()
+{
+    if grep $cwd $HOME/.git_backup.log; then
+        return 0
+    else
+    cat << EOF
+$cwd is not present in $HOME/.git_backup.log, this local repository
+don't seem to be created by $0
+EOF
+        exit 1
+    fi
+}
+
 add_to_gitignore()
 {
     git status -s | awk '{if ($1 == "??") print $2}' >> .gitignore
@@ -64,6 +77,7 @@ done
 
 if [ $DELETE -eq 1 ]; then
     if [ -d .git ]; then
+        git_backup_db_exception
         /bin/rm -rf $cwd/.git $cwd/.gitignore
         cat $HOME/.git_backup.log | grep -v "$cwd"  > /dev/shm/.git_backup.log.tmp
         /bin/mv /dev/shm/.git_backup.log.tmp $HOME/.git_backup.log
