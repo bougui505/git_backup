@@ -30,6 +30,24 @@ add_to_gitignore()
     git status -s | awk '{if ($1 == "??") print $2}' >> .gitignore
 }
 
+main()
+{
+    if [ -d .git ]; then
+        echo "Git repository in $cwd already initialized"
+    else
+        git init
+        echo $(date +%s) $cwd >> $HOME/.git_backup.log
+    fi
+
+    add_to_gitignore
+    sed -i "/^$filename$/d" .gitignore
+
+    git add $filename
+    git status -s
+    message=$(git status -s)
+    git commit -m "$message" $filename
+}
+
 # default for options
 DELETE=0
 IGNORE=0
@@ -66,17 +84,4 @@ if [ $IGNORE -eq 1 ]; then
     fi
 fi
 
-if [ -d .git ]; then
-    echo "Git repository in $cwd already initialized"
-else
-    git init
-    echo $(date +%s) $cwd >> $HOME/.git_backup.log
-fi
-
-add_to_gitignore
-sed -i "/^$filename$/d" .gitignore
-
-git add $filename
-git status -s
-message=$(git status -s)
-git commit -m "$message" $filename
+main
