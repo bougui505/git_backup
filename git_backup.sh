@@ -64,7 +64,7 @@ done
 
 if [ $DELETE -eq 1 ]; then
     if [ -d .git ]; then
-        /bin/rm -rf $cwd/{.git,.gitignore}
+        /bin/rm -rf $cwd/.git $cwd/.gitignore
         cat $HOME/.git_backup.log | grep -v "$cwd"  > /dev/shm/.git_backup.log.tmp
         /bin/mv /dev/shm/.git_backup.log.tmp $HOME/.git_backup.log
         echo "All backups deleted for directory $cwd"
