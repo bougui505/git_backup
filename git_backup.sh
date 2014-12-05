@@ -57,7 +57,7 @@ main()
 
     git add $filename
     git status -s
-    message=$(git status -s)
+    message=$(git status -s $filename)
     git commit -m "$message" $filename
 }
 
