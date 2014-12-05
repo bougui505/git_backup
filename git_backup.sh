@@ -51,7 +51,7 @@ main()
         git init
         echo $(date +%s) $cwd >> $HOME/.git_backup.log
     fi
-
+    git_backup_db_exception
     add_to_gitignore
     sed -i "/^$filename$/d" .gitignore
 
