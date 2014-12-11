@@ -27,7 +27,7 @@ git_exception()
 
 git_backup_db_exception()
 {
-    if grep $cwd $HOME/.git_backup.log; then
+    if grep -E "$cwd$" $HOME/.git_backup.log; then
         return 0
     else
     cat << EOF
