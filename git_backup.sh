@@ -7,15 +7,17 @@ cwd=$(pwd)
 usage() 
 {
 cat << EOF
-Usage: $0 [-d] [-i] [arg]
+Usage: $0 [-d] [-i] [-x arg] [arg]
 
 Backup the file given by arg with git versioning.
 
 OPTIONS:
 
-    -d    delete all the backups for the current directory
-    -i    add untracked files to .gitignore
-
+    -d              delete all the backups for the current directory
+    -i              add untracked files to .gitignore
+    -x filename     permanently remove 'filename' from backup. The git
+                    history is removed too. The local file 'filename'
+                    is not removed.
 EOF
 }
 
@@ -43,6 +45,22 @@ add_to_gitignore()
     git status -s | awk '{if ($1 == "??") print $2}' >> .gitignore
 }
 
+delete_backuped_file()
+{
+    git_backup_db_exception
+    filename=$1
+    if [ -f $filename ]; then
+        git rm --cached $filename
+        message=$(git status -s $filename)
+        git commit -a -m "$message"
+        git filter-branch --tree-filter "/bin/rm -f $filename"
+        /bin/rm -rf .git/refs/original
+        add_to_gitignore
+    else
+        echo "No such file $filename or $filename is not a regular file!"
+    fi
+}
+
 main()
 {
     if [ -d .git ]; then
@@ -64,14 +82,16 @@ main()
 # default for options
 DELETE=0
 IGNORE=0
+XFILE=0
 
 # parse the options
-while getopts ':dih' opt ; do
+while getopts ':dix:h' opt ; do
   case $opt in
     d) DELETE=1;;
     i) IGNORE=1;;
+    x) XFILE=$OPTARG;;
     h) usage ; exit 0;;
-    ?) echo "Invalid option: -$OPTARG"; usage; exit 1;;
+    ?) echo "Invalid option: -$OPTARG or argument required"; usage; exit 1;;
   esac
 done
 
@@ -92,6 +112,15 @@ if [ $IGNORE -eq 1 ]; then
     if [ -f .gitignore ]; then
         add_to_gitignore
         echo "All untracked files added to .gitignore"
+        exit 0
+    else
+        git_exception
+    fi
+fi
+
+if [ $XFILE != 0 ]; then
+    if [ -d .git ]; then
+        delete_backuped_file $XFILE
         exit 0
     else
         git_exception
