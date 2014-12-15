@@ -18,6 +18,7 @@ OPTIONS:
     -x filename     permanently remove 'filename' from backup. The git
                     history is removed too. The local file 'filename'
                     is not removed.
+    -a              backup all files already under version control
 EOF
 }
 
@@ -51,14 +52,19 @@ delete_backuped_file()
     filename=$1
     if [ -f $filename ]; then
         git rm --cached $filename
-        message=$(git status -s $filename)
-        git commit -a -m "$message"
+        backup_all_files
         git filter-branch --tree-filter "/bin/rm -f $filename"
         /bin/rm -rf .git/refs/original
         add_to_gitignore
     else
         echo "No such file $filename or $filename is not a regular file!"
     fi
+}
+
+backup_all_files()
+{
+    message=$(git status -s)
+    git commit -a -m "$message"
 }
 
 main()
@@ -83,13 +89,15 @@ main()
 DELETE=0
 IGNORE=0
 XFILE=0
+ALL=0
 
 # parse the options
-while getopts ':dix:h' opt ; do
+while getopts ':dix:ah' opt ; do
   case $opt in
     d) DELETE=1;;
     i) IGNORE=1;;
     x) XFILE=$OPTARG;;
+    a) ALL=1;;
     h) usage ; exit 0;;
     ?) echo "Invalid option: -$OPTARG or argument required"; usage; exit 1;;
   esac
@@ -121,6 +129,16 @@ fi
 if [ $XFILE != 0 ]; then
     if [ -d .git ]; then
         delete_backuped_file $XFILE
+        exit 0
+    else
+        git_exception
+    fi
+fi
+
+if [ $ALL -eq 1 ]; then
+    git_backup_db_exception
+    if [ -d .git ]; then
+        backup_all_files
         exit 0
     else
         git_exception
