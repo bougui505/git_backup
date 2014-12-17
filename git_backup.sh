@@ -21,7 +21,7 @@ OPTIONS:
     -a              Backup all files already under version control for 
                     the current directory
     -A              Backup all files already under version control for
-                    all directory in $HOME/.git_backup.log
+                    all directories listed in $HOME/.git_backup.log
 EOF
 }
 
