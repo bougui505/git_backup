@@ -72,7 +72,6 @@ backup_all_files()
 
 backup_all()
 {
-    cwd=$(pwd)
     for x in $(cat $HOME/.git_backup.log | awk '{print $2}'); do
         if [ -d $x ]; then
             cd $x
