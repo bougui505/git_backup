@@ -146,7 +146,7 @@ if [ $DELETE -eq 1 ]; then
 fi
 
 if [ $IGNORE -eq 1 ]; then
-    if [ -f .gitignore ]; then
+    if [ -d .git ]; then
         add_to_gitignore
         echo "All untracked files added to .gitignore"
         exit 0
