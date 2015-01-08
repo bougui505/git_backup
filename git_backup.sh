@@ -58,7 +58,6 @@ delete_backuped_file()
         backup_all_files
         git filter-branch --tree-filter "/bin/rm -f $filename"
         /bin/rm -rf .git/refs/original
-        add_to_gitignore
     else
         echo "No such file $filename or $filename is not a regular file!"
     fi
@@ -102,7 +101,6 @@ main()
         echo $(date +%s) $cwd >> $HOME/.git_backup.log
     fi
     git_backup_db_exception
-    add_to_gitignore
     sed -i "/^$filename$/d" .gitignore
 
     git add $filename
