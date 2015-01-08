@@ -65,7 +65,7 @@ delete_backuped_file()
 
 backup_all_files()
 {
-    message=$(git status -s | grep -Ev "^??")
+    message=$(git status -s | grep -Ev "^\?\?")
     git commit -a -m "$message"
 }
 
@@ -77,7 +77,7 @@ backup_all()
             echo "############"
             pwd
             if [ -d .git ]; then
-                message=$(git status -s | grep -Ev "^??")
+                message=$(git status -s | grep -Ev "^\?\?")
                 git commit -a -m "$message"
             else
                 git_exception
