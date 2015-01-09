@@ -107,6 +107,7 @@ main()
     git status -s
     message=$(git status -s $filename)
     git commit -m "$message" $filename
+    exit 0
 }
 
 # default for options
