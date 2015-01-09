@@ -53,13 +53,13 @@ delete_backuped_file()
 {
     git_backup_db_exception
     filename=$1
-    if [ -f $filename ]; then
+    if [ -d .git ]; then
         git rm --cached $filename
         backup_all_files
         git filter-branch --tree-filter "/bin/rm -f $filename"
         /bin/rm -rf .git/refs/original
     else
-        echo "No such file $filename or $filename is not a regular file!"
+        git_exception
     fi
 }
 
