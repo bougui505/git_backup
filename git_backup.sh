@@ -110,6 +110,7 @@ main()
         message=$(git status -s $filename)
         git commit -m "$message" $filename
     done
+    add_to_gitignore
     exit 0
 }
 
