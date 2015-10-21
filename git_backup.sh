@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 # -*- coding: UTF8 -*-
 
-filename=$1
+filenames=$@
 cwd=$(pwd)
 
 usage() 
@@ -101,12 +101,13 @@ main()
         echo $(date +%s) $cwd >> $HOME/.git_backup.log
     fi
     git_backup_db_exception
-    sed -i "/^$filename$/d" .gitignore
-
-    git add $filename
-    git status -s
-    message=$(git status -s $filename)
-    git commit -m "$message" $filename
+    for filename in $filenames; do # see: http://bloggb.fr/2015/10/21/get_a_range_of_script_arguments_in_zsh.html
+        sed -i "/^$filename$/d" .gitignore
+        git add $filename
+        git status -s
+        message=$(git status -s $filename)
+        git commit -m "$message" $filename
+    done
     exit 0
 }
 
