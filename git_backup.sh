@@ -102,7 +102,9 @@ main()
     fi
     git_backup_db_exception
     for filename in $filenames; do # see: http://bloggb.fr/2015/10/21/get_a_range_of_script_arguments_in_zsh.html
-        sed -i "/^$filename$/d" .gitignore
+        if [ -f .gitignore ]; then
+            sed -i "/^$filename$/d" .gitignore
+        fi
         git add $filename
         git status -s
         message=$(git status -s $filename)
